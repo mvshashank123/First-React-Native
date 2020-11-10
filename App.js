@@ -10,25 +10,38 @@ import {
   View,
 } from "react-native";
 import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart
+  LineChart, ProgressChart
 } from "react-native-chart-kit";
-import Todo from "./Todo";
 
 export default function App() {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [total, setTotal] = useState(0);
+  const [data, setData] = useState([{
+    data: [
+      Math.random() *100,
+      Math.random() *100,
+      Math.random() *100,
+      Math.random() *100,
+      Math.random() *100,
+    ]
+  }]);
   const [expenses, setExpenses] = useState([
     {
       description: "Book",
-      amount: 200
+      amount: 200,
+      timestamp: new Date()
     },
+    {
+      description: "Food",
+      amount: 500,
+      timestamp: new Date()
+    }
   ]);
+
+  useEffect(() => {
+
+  },[expenses])
 
   useEffect(() =>{
     setTotal(expenses.reduce((total,expense) => total+expense.amount,0))
@@ -44,19 +57,8 @@ export default function App() {
       <Text style={styles.titleText}>Hello React Native</Text>
       <LineChart
     data={{
-      labels: ["January", "February", "March", "April", "May", "June"],
-      datasets: [
-        {
-          data: [
-            Math.random() * 100,
-            Math.random() * 100,
-            Math.random() * 100,
-            Math.random() * 100,
-            Math.random() * 100,
-            Math.random() * 100
-          ]
-        }
-      ]
+      labels: [expenses[0].timestamp],
+      datasets: data
     }}
     width={Dimensions.get("window").width} // from react-native
     height={220}
@@ -66,7 +68,7 @@ export default function App() {
       backgroundColor: "#e26a00",
       backgroundGradientFrom: "#fb8c00",
       backgroundGradientTo: "#ffa726",
-      decimalPlaces: 2, // optional, defaults to 2dp
+      decimalPlaces: null, // optional, defaults to 2dp
       color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
       labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
       style: {
@@ -84,6 +86,33 @@ export default function App() {
       borderRadius: 16
     }}
   />
+  <ProgressChart
+  data={{
+  labels: ["Swim", "Bike", "Run"],
+  data: [0.4, 0.6, 0.8]
+}}
+  width={Dimensions.get("window").width}
+  height={220}
+  strokeWidth={16}
+  radius={32}
+  chartConfig={{
+      backgroundColor: "#e26a00",
+      backgroundGradientFrom: "#fb8c00",
+      backgroundGradientTo: "#ffa726",
+      decimalPlaces: 2, // optional, defaults to 2dp
+      color: (opacity = 1) => `rgba(1, 100, 200, ${opacity})`,
+      labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+      style: {
+        borderRadius: 16
+      },
+      propsForDots: {
+        r: "6",
+        strokeWidth: "2",
+        stroke: "#ffa726"
+      }
+    }}
+  hideLegend={false}
+/>
       <Text>Total: {total}</Text>
       <StatusBar style="auto" />
 
@@ -99,7 +128,7 @@ export default function App() {
         value={amount}
         onChangeText={(text) => setAmount(text)}
       />
-      <Button onPress={addExpenses} title="Add Todo" />
+      <Button onPress={addExpenses} title="Add Expense" />
       <ScrollView>
         {expenses.map((expense)=>(
           <View>
