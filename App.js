@@ -12,20 +12,20 @@ import {
 import {
   LineChart, ProgressChart
 } from "react-native-chart-kit";
+import moment from 'moment';
 
 export default function App() {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [total, setTotal] = useState(0);
-  const [data, setData] = useState([{
-    data: [
-      Math.random() *100,
-      Math.random() *100,
-      Math.random() *100,
-      Math.random() *100,
-      Math.random() *100,
-    ]
-  }]);
+  const [data, setData] = useState([
+    {[moment()]: 2000},
+    {[moment().subtract(1,'days')]: 2500},
+    {[moment().subtract(2,'days')]: 3000},
+    {[moment().subtract(3,'days')]: 4500},
+    {[moment().subtract(4,'days')]: 2500},
+    {[moment().subtract(5,'days')]: 1500}
+  ]);
   const [expenses, setExpenses] = useState([
     {
       description: "Book",
@@ -38,6 +38,9 @@ export default function App() {
       timestamp: new Date()
     }
   ]);
+
+  const getDates = () => data.map( pair => Object.keys(pair)[0]);
+  const getAmounts = () => data.map( pair => Object.values(pair)[0]);
 
   useEffect(() => {
 
@@ -57,8 +60,10 @@ export default function App() {
       <Text style={styles.titleText}>Hello React Native</Text>
       <LineChart
     data={{
-      labels: [expenses[0].timestamp],
-      datasets: data
+      labels: getDates(),
+      datasets: [{
+        data: getAmounts()
+      }]
     }}
     width={Dimensions.get("window").width} // from react-native
     height={220}
